@@ -12,8 +12,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import aitorpagan.starmoviesimdb.Interface.FilmContainer;
 import aitorpagan.starmoviesimdb.Model.Film;
 import aitorpagan.starmoviesimdb.R;
 
@@ -21,10 +23,11 @@ import aitorpagan.starmoviesimdb.R;
  * Created by aitorpagan on 23/2/17.
  */
 
-public class FilmAdapter extends RecyclerView.Adapter {
+public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
 
     List<Film> films;
     Context context;
+
 
     public List<Film> getFilms() {
         return films;
@@ -36,6 +39,7 @@ public class FilmAdapter extends RecyclerView.Adapter {
 
     public FilmAdapter(Context context){
         this.context = context;
+        this.films = new ArrayList<>(0);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class FilmAdapter extends RecyclerView.Adapter {
         builder.indicatorsEnabled(true);
         builder.loggingEnabled(true);
         //We make a callBack to manage in case Cache is cleaned.
-        builder.build().load("https://image.tmdb.org/t/p/w500/"+getFilms().get(position).getPoster_path()).networkPolicy(NetworkPolicy.OFFLINE).into(filmHolder.movieImageView, new Callback() {
+        builder.build().load(context.getResources().getString(R.string.images_url)+getFilms().get(position).getPoster_path()).networkPolicy(NetworkPolicy.OFFLINE).into(filmHolder.movieImageView, new Callback() {
             @Override
             public void onSuccess() {
 
@@ -75,6 +79,12 @@ public class FilmAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return films.size();
+    }
+
+    @Override
+    public void addFilms(List<Film> newFilms) {
+        this.films.addAll(newFilms);
+        this.notifyDataSetChanged();
     }
 
 
