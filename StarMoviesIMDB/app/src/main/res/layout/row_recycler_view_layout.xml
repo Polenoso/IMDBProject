@@ -1,6 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:layout_margin="10dp"
+    android:paddingBottom="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:id="@+id/movie_image"
+            android:layout_gravity="left"
+            android:layout_margin="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/img_example"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/movie_title"
+                android:text="Título largo para prueba"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="15dp"
+                android:textSize="20dp"
+                android:textColor="@android:color/black"
+                android:maxLines="4"
+                android:ellipsize="none"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Release:"
+                android:textColor="@android:color/black"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2017"
+                android:textColor="@android:color/black"
+                android:id="@+id/release_year"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Overview:"
+        android:layout_marginLeft="10dp"
+        android:textColor="@android:color/black"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="In 1926, Newt Scamander arrives at the Magical Congress of the United States of America with a magically expanded briefcase, which houses a number of dangerous creatures and their habitats. When the creatures escape from the briefcase, it sends the American wizarding authorities after Newt, and threatens to strain even further the state of magical and non-magical relations."
+        android:layout_marginLeft="10dp"
+        android:textColor="@android:color/black"
+        android:gravity="left"
+        android:ellipsize="none"
+        android:id="@+id/overview_text"
+        />
 
 </LinearLayout>

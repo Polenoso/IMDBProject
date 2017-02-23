@@ -1,5 +1,8 @@
 package aitorpagan.starmoviesimdb.Model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by aitorpagan on 23/2/17.
  */
@@ -41,5 +44,20 @@ public class Film {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public static Film fromJSON(JSONObject json){
+        Film film = new Film();
+        try {
+            film.setOverview(json.getString("overview"));
+            film.setRelease_date(json.getString("release_date"));
+            film.setTitle(json.getString("title"));
+            film.setPoster_path(json.getString("poster_path"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            film = null;
+        }
+
+        return film;
     }
 }
