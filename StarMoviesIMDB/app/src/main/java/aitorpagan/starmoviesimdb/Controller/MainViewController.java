@@ -33,8 +33,8 @@ public class MainViewController extends Activity {
         setContentView(R.layout.main_view_layout);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerviewlist);
         recyclerView.setHasFixedSize(true);
-        FilmAdapter adapter = new FilmAdapter(getApplicationContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        FilmAdapter adapter = new FilmAdapter(getApplicationContext());
         adapter.setFilms(getMockedFilms(Tools.loadJSONFromAsset(getApplicationContext())));
         recyclerView.setAdapter(adapter);
 

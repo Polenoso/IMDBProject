@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import aitorpagan.starmoviesimdb.Model.Film;
@@ -43,13 +47,29 @@ public class FilmAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        FilmHolder filmHolder = (FilmHolder) holder;
+        final FilmHolder filmHolder = (FilmHolder) holder;
+        final int pos = position; //for calling in callback
         filmHolder.overviewView.setText(getFilms().get(position).getOverview());
         filmHolder.titleView.setText(getFilms().get(position).getTitle());
         //Needs to cast date to only year
         filmHolder.releaseDateView.setText(getFilms().get(position).getRelease_date());
         //Needs to call to download image where setting image to holder.
-        //filmHolder.movieImageView.setImageResource(R.drawable.img_example);
+        final Picasso.Builder builder = new Picasso.Builder(context);
+        builder.indicatorsEnabled(true);
+        builder.loggingEnabled(true);
+        //We make a callBack to manage in case Cache is cleaned.
+        builder.build().load("https://image.tmdb.org/t/p/w500/"+getFilms().get(position).getPoster_path()).networkPolicy(NetworkPolicy.OFFLINE).into(filmHolder.movieImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+                //if there is no cache, get the image from the server
+                builder.build().load("https://image.tmdb.org/t/p/w500/"+getFilms().get(pos).getPoster_path()).error(R.drawable.img_example).into(filmHolder.movieImageView);
+            }
+        });
     }
 
     @Override
