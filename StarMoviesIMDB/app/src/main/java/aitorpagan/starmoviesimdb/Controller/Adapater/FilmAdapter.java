@@ -114,6 +114,12 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
         this.notifyDataSetChanged();
     }
 
+    public void removeAll(){
+        this.films = new ArrayList<>(0);
+        this.films.add(null);
+        this.notifyDataSetChanged();
+    }
+
 
     private static class FilmHolder extends RecyclerView.ViewHolder{
 
