@@ -1,18 +1,20 @@
 package aitorpagan.starmoviesimdb.Controller.Delegate;
 
-import android.app.Activity;
+import android.os.Handler;
 
-import java.util.List;
 
 import aitorpagan.starmoviesimdb.Controller.MainViewController;
-import aitorpagan.starmoviesimdb.Model.Film;
-import aitorpagan.starmoviesimdb.Tools;
+import aitorpagan.starmoviesimdb.Interface.JSONResponse;
+import aitorpagan.starmoviesimdb.Interface.NetworkOperationDelegate;
+import aitorpagan.starmoviesimdb.Model.FilmResponse;
+import aitorpagan.starmoviesimdb.Network.NetworkRequestImpl;
+import aitorpagan.starmoviesimdb.R;
 
 /**
  * Created by aitorpagan on 23/2/17.
  */
 
-public class MainDelegate {
+public class MainDelegate implements NetworkOperationDelegate {
 
     MainViewController activity;
     private int page;
@@ -30,14 +32,32 @@ public class MainDelegate {
     }
 
     public void updateFilms(){
-        activity.container.addFilms(activity.getMockedFilms(Tools.loadJSONFromAsset(activity.getApplicationContext())));
-        if(page == 1){
-            activity.onResultLoad();
-            page++;
-        }else{
-            activity.onResultBack();
-        }
+        String url = getActivity().getResources().getString(R.string.discover_url);
+        String apikey = getActivity().getResources().getString(R.string.api_key);
+        url = String.format(url,apikey);
+        url = url + page;
+        NetworkRequestImpl networkRequest = new NetworkRequestImpl(this,new FilmResponse(),activity.getApplicationContext(),url);
+        Handler handler = new Handler();
+        handler.post(networkRequest);
 
     }
 
+    @Override
+    public void preExecuteNeworkRequest() {
+        if(page > 1){
+            activity.container.startLoading();
+        }
+    }
+
+    @Override
+    public void processNetworkResponse(int operation, JSONResponse response) {
+
+        if(page > 1){
+            activity.container.stopLoading();
+        }else{
+            activity.onResultLoad();
+        }
+        activity.container.addFilms(((FilmResponse)response).getFilms());
+        page++;
+    }
 }

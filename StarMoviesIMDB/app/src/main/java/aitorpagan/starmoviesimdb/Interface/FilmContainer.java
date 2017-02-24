@@ -11,4 +11,6 @@ import aitorpagan.starmoviesimdb.Model.Film;
 public interface FilmContainer {
 
     public void addFilms(List<Film> newFilms);
+    public void startLoading();
+    public void stopLoading();
 }

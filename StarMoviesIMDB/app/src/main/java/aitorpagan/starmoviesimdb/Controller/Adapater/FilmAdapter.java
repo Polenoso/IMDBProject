@@ -6,10 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -27,7 +26,14 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
 
     List<Film> films;
     Context context;
+    Picasso.Builder builder;
+    Boolean mIsLoading;
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
 
+    public Boolean getmIsLoading() {
+        return mIsLoading;
+    }
 
     public List<Film> getFilms() {
         return films;
@@ -40,40 +46,47 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
     public FilmAdapter(Context context){
         this.context = context;
         this.films = new ArrayList<>(0);
+        builder = new Picasso.Builder(this.context);
+        Picasso.setSingletonInstance(builder.build());
+        builder.indicatorsEnabled(true);
+        builder.loggingEnabled(true);
+        mIsLoading = false;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_recycler_view_layout, parent, false);
-        FilmHolder vh = new FilmHolder(v);
-        return vh;
+
+
+        View v = null;
+        if(viewType == VIEW_TYPE_ITEM){
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_recycler_view_layout, parent, false);
+            return new FilmHolder(v);
+        }else if(viewType == VIEW_TYPE_LOADING){
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loading_item, parent, false);
+            return new LoadingViewHolder(v);
+        }
+        return null;
+    }
+
+    @Override
+    public int getItemViewType(int position){
+        return getFilms().get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final FilmHolder filmHolder = (FilmHolder) holder;
-        final int pos = position; //for calling in callback
-        filmHolder.overviewView.setText(getFilms().get(position).getOverview());
-        filmHolder.titleView.setText(getFilms().get(position).getTitle());
-        //Needs to cast date to only year
-        filmHolder.releaseDateView.setText(getFilms().get(position).getRelease_date());
-        //Needs to call to download image where setting image to holder.
-        final Picasso.Builder builder = new Picasso.Builder(context);
-        builder.indicatorsEnabled(true);
-        builder.loggingEnabled(true);
-        //We make a callBack to manage in case Cache is cleaned.
-        builder.build().load(context.getResources().getString(R.string.images_url)+getFilms().get(position).getPoster_path()).networkPolicy(NetworkPolicy.OFFLINE).into(filmHolder.movieImageView, new Callback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onError() {
-                //if there is no cache, get the image from the server
-                builder.build().load("https://image.tmdb.org/t/p/w500/"+getFilms().get(pos).getPoster_path()).error(R.drawable.img_example).into(filmHolder.movieImageView);
-            }
-        });
+        if(holder instanceof  FilmHolder){
+            FilmHolder filmHolder = (FilmHolder) holder;
+            filmHolder.overviewView.setText(getFilms().get(position).getOverview());
+            filmHolder.titleView.setText(getFilms().get(position).getTitle());
+            //Needs to cast date to only year
+            filmHolder.releaseDateView.setText(getFilms().get(position).getRelease_date());
+            //Needs to call to download image where setting image to holder.
+            Picasso.with(context).load(context.getResources().getString(R.string.images_url) + getFilms().get(position).getPoster_path()).resize(150,250).into(filmHolder.movieImageView);
+        }else if (holder instanceof LoadingViewHolder) {
+            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+            loadingViewHolder.progressBar.setIndeterminate(true);
+        }
     }
 
     @Override
@@ -84,6 +97,20 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
     @Override
     public void addFilms(List<Film> newFilms) {
         this.films.addAll(newFilms);
+        this.notifyDataSetChanged();
+    }
+
+    @Override
+    public void startLoading(){
+        this.films.add(null);
+        this.mIsLoading = true;
+        this.notifyDataSetChanged();
+    }
+
+    @Override
+    public void stopLoading(){
+        this.films.remove(films.size() - 1);
+        this.mIsLoading = false;
         this.notifyDataSetChanged();
     }
 
@@ -104,4 +131,14 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
         }
 
     }
+
+    private  static class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar1);
+        }
+    }
+
 }
