@@ -23,8 +23,13 @@ public class NetworkRequestImpl implements Runnable {
     JSONResponse response;
     Context context;
     String url;
+    int operation;
 
-    public NetworkRequestImpl(NetworkOperationDelegate delegateOperation, JSONResponse response, Context context,String url){
+    public void setOperation(int operation) {
+        this.operation = operation;
+    }
+
+    public NetworkRequestImpl(NetworkOperationDelegate delegateOperation, JSONResponse response, Context context, String url){
         this.delegateOperation = delegateOperation;
         this.response = response;
         this.context = context;

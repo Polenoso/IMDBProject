@@ -7,6 +7,7 @@ import aitorpagan.starmoviesimdb.Controller.MainViewController;
 import aitorpagan.starmoviesimdb.Interface.JSONResponse;
 import aitorpagan.starmoviesimdb.Interface.NetworkOperationDelegate;
 import aitorpagan.starmoviesimdb.Model.FilmResponse;
+import aitorpagan.starmoviesimdb.Network.NetworkConstants;
 import aitorpagan.starmoviesimdb.Network.NetworkRequestImpl;
 import aitorpagan.starmoviesimdb.R;
 
@@ -37,6 +38,7 @@ public class MainDelegate implements NetworkOperationDelegate {
         url = String.format(url,apikey);
         url = url + page;
         NetworkRequestImpl networkRequest = new NetworkRequestImpl(this,new FilmResponse(),activity.getApplicationContext(),url);
+        networkRequest.setOperation(NetworkConstants.DISCOVER_OP);
         Handler handler = new Handler();
         handler.post(networkRequest);
 
@@ -52,12 +54,15 @@ public class MainDelegate implements NetworkOperationDelegate {
     @Override
     public void processNetworkResponse(int operation, JSONResponse response) {
 
-        if(page > 1){
-            activity.container.stopLoading();
-        }else{
-            activity.onResultLoad();
+        if(operation == NetworkConstants.DISCOVER_OP){
+            if(page > 1){
+                activity.container.stopLoading();
+            }else{
+                activity.onResultLoad();
+            }
+            activity.container.addFilms(((FilmResponse)response).getFilms());
+            page++;
         }
-        activity.container.addFilms(((FilmResponse)response).getFilms());
-        page++;
+
     }
 }
