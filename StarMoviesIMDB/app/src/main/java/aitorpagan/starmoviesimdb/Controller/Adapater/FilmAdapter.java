@@ -119,6 +119,7 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
     public void removeAll(){
         this.films = new ArrayList<>(0);
         this.films.add(null);
+        this.mIsLoading = true;
         this.notifyDataSetChanged();
     }
 

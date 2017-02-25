@@ -1,6 +1,8 @@
 package aitorpagan.starmoviesimdb.Network;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -45,23 +47,31 @@ public class NetworkRequestImpl implements Runnable {
     }
 
     public void cancelPendingTransactions(){
-        Ion.getDefault(context).cancelAll();
+        try{
+            Ion.getDefault(context).cancelAll(context);
+        }catch (Exception e){
+            Log.e("cancel",e.getMessage());
+        }
+
     }
 
     @Override
     public void run() {
         delegateOperation.preExecuteNeworkRequest(operation);
-        Ion.with(context).load("GET",url).asJsonObject().withResponse().setCallback(new FutureCallback<Response<JsonObject>>() {
+        Ion.with(context).load("GET",url).noCache().asJsonObject().withResponse().setCallback(new FutureCallback<Response<JsonObject>>() {
             @Override
             public void onCompleted(Exception e, Response<JsonObject> result) {
                 if(null!=result) {
                     try {
                         response.parseJSON(new JSONObject(result.getResult().toString()));
-                        delegateOperation.processNetworkResponse(operation, response);
                     } catch (JSONException e1) {
                         e1.printStackTrace();
+                        Toast.makeText(context,result.toString(),Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    response = null;
                 }
+                delegateOperation.processNetworkResponse(operation, response);
             }
         });
     }

@@ -6,4 +6,7 @@
     <string name="discover_url">https://api.themoviedb.org/3/discover/movie?api_key=%1$s&amp;language=en-US&amp;sort_by=popularity.desc&amp;include_adult=false&amp;include_video=false&amp;page=</string>
     <string name="search_url">https://api.themoviedb.org/3/search/movie?api_key=%1$s&amp;language=en-US&amp;query=%2$s&amp;page=%3$s&amp;include_adult=false</string>
     <string name="api_key">93aea0c77bc168d8bbce3918cefefa45</string>
+
+    <!-- Messages -->
+    <string name="no_results">No Results Where Found</string>
 </resources>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import aitorpagan.starmoviesimdb.Controller.Adapater.FilmAdapter;
 import aitorpagan.starmoviesimdb.Controller.Delegate.MainDelegate;
@@ -26,13 +27,12 @@ import aitorpagan.starmoviesimdb.Tools;
  * Created by aitorpagan on 23/2/17.
  */
 
-public class MainViewController extends Activity implements View.OnClickListener{
+public class MainViewController extends Activity{
 
     private RecyclerView recyclerView;
     MainDelegate delegate;
     public FilmContainer container;
     EditText searchText;
-    Button searchButton;
     Boolean searchIsActive;
 
     @Override
@@ -76,7 +76,7 @@ public class MainViewController extends Activity implements View.OnClickListener
                 int visibleItemCount = recyclerView.getLayoutManager().getChildCount();
                 int totalItemCount = recyclerView.getLayoutManager().getItemCount();
                 int lastItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
-                if (lastItemPosition >= totalItemCount - 1 && !((FilmAdapter) recyclerView.getAdapter()).getmIsLoading()) {
+                if ((totalItemCount > visibleItemCount) && (lastItemPosition >= totalItemCount - 1) && (!((FilmAdapter) recyclerView.getAdapter()).getmIsLoading()) ) {
                     delegate.updateFilms(searchIsActive ? NetworkConstants.SEARCH_OP : NetworkConstants.DISCOVER_OP,searchText.getText().toString().isEmpty() ? null : searchText.getText().toString());
                 }
             }
@@ -85,8 +85,6 @@ public class MainViewController extends Activity implements View.OnClickListener
         recyclerView.setAdapter((RecyclerView.Adapter) container);
         recyclerView.setVisibility(View.VISIBLE);
         recyclerView.getAdapter().notifyDataSetChanged();
-        searchButton = (Button) findViewById(R.id.search_button_view);
-        searchButton.setOnClickListener(this);
         searchText = (EditText) findViewById(R.id.search_text_view);
         searchText.addTextChangedListener(new TextWatcherDelegate(this.getApplicationContext(),this,this.delegate));
         searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -100,12 +98,6 @@ public class MainViewController extends Activity implements View.OnClickListener
         searchEnd();
     }
 
-    @Override
-    public void onClick(View v) {
-        if(v == searchButton){
-            searchText.setVisibility(View.VISIBLE);
-        }
-    }
 
     public void searchBegan(){
         ((FilmAdapter)this.recyclerView.getAdapter()).removeAll();

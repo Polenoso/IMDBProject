@@ -1,6 +1,7 @@
 package aitorpagan.starmoviesimdb.Controller.Delegate;
 
 import android.os.Handler;
+import android.widget.Toast;
 
 
 import com.koushikdutta.ion.Ion;
@@ -41,7 +42,7 @@ public class MainDelegate implements NetworkOperationDelegate {
     }
 
     public void updateFilms(int operation, String query){
-        if(operation == NetworkConstants.DISCOVER_OP) {
+        if(operation == NetworkConstants.DISCOVER_OP && page < 1000) { //TMDB limit to 1000 pages de Service
             if(null != httpReq) httpReq.cancelPendingTransactions();
             String url = getActivity().getResources().getString(R.string.discover_url);
             String apikey = getActivity().getResources().getString(R.string.api_key);
@@ -53,6 +54,7 @@ public class MainDelegate implements NetworkOperationDelegate {
         }else if(operation == NetworkConstants.NEWSEARCH_OP){
             if(isPreviousRunning){
                 httpReq.cancelPendingTransactions();
+                handler.removeCallbacks(httpReq);
             }
             page = 1;
             String url = getActivity().getResources().getString(R.string.search_url);
@@ -65,6 +67,7 @@ public class MainDelegate implements NetworkOperationDelegate {
         }else if(operation == NetworkConstants.SEARCH_OP){
             if(isPreviousRunning){
                 httpReq.cancelPendingTransactions();
+                handler.removeCallbacks(httpReq);
             }
             String url = getActivity().getResources().getString(R.string.search_url);
             String apikey = getActivity().getResources().getString(R.string.api_key);
@@ -90,20 +93,23 @@ public class MainDelegate implements NetworkOperationDelegate {
 
     @Override
     public void processNetworkResponse(int operation, JSONResponse response) {
-        isPreviousRunning = false;
-        if(operation == NetworkConstants.DISCOVER_OP){
-            activity.container.stopLoading();
-            activity.container.addFilms(((FilmResponse)response).getFilms());
-            page++;
-        }else if(operation == NetworkConstants.NEWSEARCH_OP){
-            activity.container.stopLoading();
-            activity.container.addFilms(((FilmResponse)response).getFilms());
-            searchPage++;
-        }else if(operation == NetworkConstants.SEARCH_OP){
-            activity.container.stopLoading();
-            activity.container.addFilms(((FilmResponse)response).getFilms());
-            searchPage++;
-        }
 
+        if(null!=response){
+            isPreviousRunning = false;
+            if(operation == NetworkConstants.DISCOVER_OP){
+                page++;
+            }else if(operation == NetworkConstants.NEWSEARCH_OP || operation == NetworkConstants.SEARCH_OP){
+                searchPage++;
+            }
+            if(((FilmResponse)response).getFilms().isEmpty()){
+                Toast.makeText(getActivity().getApplicationContext(),getActivity().getResources().getText(R.string.no_results),Toast.LENGTH_LONG).show();
+                activity.container.stopLoading();
+            }else{
+                activity.container.stopLoading();
+                activity.container.addFilms(((FilmResponse)response).getFilms());
+            }
+        }else{
+            //Something went wrong
+        }
     }
 }
