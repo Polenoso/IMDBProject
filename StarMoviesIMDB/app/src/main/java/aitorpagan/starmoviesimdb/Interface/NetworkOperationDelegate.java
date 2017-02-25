@@ -5,6 +5,6 @@ package aitorpagan.starmoviesimdb.Interface;
  */
 
 public interface NetworkOperationDelegate {
-    public void preExecuteNeworkRequest();
+    public void preExecuteNeworkRequest(int operation);
     public void processNetworkResponse(int operation, JSONResponse response);
 }

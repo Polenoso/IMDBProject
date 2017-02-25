@@ -109,9 +109,11 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
 
     @Override
     public void stopLoading(){
-        this.films.remove(films.size() - 1);
-        this.mIsLoading = false;
-        this.notifyDataSetChanged();
+        if(films.size() > 0) {
+            this.films.remove(films.size() - 1);
+            this.mIsLoading = false;
+            this.notifyDataSetChanged();
+        }
     }
 
     public void removeAll(){

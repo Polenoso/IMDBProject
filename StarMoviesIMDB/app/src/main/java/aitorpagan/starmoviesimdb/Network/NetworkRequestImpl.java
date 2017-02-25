@@ -44,17 +44,23 @@ public class NetworkRequestImpl implements Runnable {
         this.url = url;
     }
 
+    public void cancelPendingTransactions(){
+        Ion.getDefault(context).cancelAll();
+    }
+
     @Override
     public void run() {
-        delegateOperation.preExecuteNeworkRequest();
+        delegateOperation.preExecuteNeworkRequest(operation);
         Ion.with(context).load("GET",url).asJsonObject().withResponse().setCallback(new FutureCallback<Response<JsonObject>>() {
             @Override
             public void onCompleted(Exception e, Response<JsonObject> result) {
-                try {
-                    response.parseJSON(new JSONObject(result.getResult().toString()));
-                    delegateOperation.processNetworkResponse(1,response);
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
+                if(null!=result) {
+                    try {
+                        response.parseJSON(new JSONObject(result.getResult().toString()));
+                        delegateOperation.processNetworkResponse(operation, response);
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
