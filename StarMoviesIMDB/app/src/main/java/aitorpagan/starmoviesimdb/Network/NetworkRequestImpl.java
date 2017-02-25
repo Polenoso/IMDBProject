@@ -58,7 +58,7 @@ public class NetworkRequestImpl implements Runnable {
     @Override
     public void run() {
         delegateOperation.preExecuteNeworkRequest(operation);
-        Ion.with(context).load("GET",url).noCache().asJsonObject().withResponse().setCallback(new FutureCallback<Response<JsonObject>>() {
+        Ion.with(context).load("GET",url.replaceAll("\\s","%20")).noCache().asJsonObject().withResponse().setCallback(new FutureCallback<Response<JsonObject>>() {
             @Override
             public void onCompleted(Exception e, Response<JsonObject> result) {
                 if(null!=result) {
