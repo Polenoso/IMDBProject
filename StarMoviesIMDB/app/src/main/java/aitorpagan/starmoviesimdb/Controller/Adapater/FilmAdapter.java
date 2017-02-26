@@ -17,6 +17,7 @@ import java.util.List;
 import aitorpagan.starmoviesimdb.Interface.FilmContainer;
 import aitorpagan.starmoviesimdb.Model.Film;
 import aitorpagan.starmoviesimdb.R;
+import aitorpagan.starmoviesimdb.Tools;
 
 /**
  * Created by aitorpagan on 23/2/17.
@@ -80,7 +81,7 @@ public class FilmAdapter extends RecyclerView.Adapter implements FilmContainer{
             filmHolder.overviewView.setText(getFilms().get(position).getOverview());
             filmHolder.titleView.setText(getFilms().get(position).getTitle());
             //Needs to cast date to only year
-            filmHolder.releaseDateView.setText(getFilms().get(position).getRelease_date());
+            filmHolder.releaseDateView.setText(Tools.getYearFromStirngDate(getFilms().get(position).getRelease_date(),"yyyy-MM-dd"));
             //Needs to call to download image where setting image to holder.
             Picasso.with(context).load(context.getResources().getString(R.string.images_url) + getFilms().get(position).getPoster_path()).resize(150,250).into(filmHolder.movieImageView);
         }else if (holder instanceof LoadingViewHolder) {
